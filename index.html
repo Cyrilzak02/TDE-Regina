@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Adicionar Linha</title>
+    <style>
+      body {
+        font-size: 17px;
+      }
+
+      body {
+        font-size: 17px;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        width: 50%;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .fechar {
+        cursor: pointer;
+        font-size: 20px;
+      }
+
+      .modal-input {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+      }
+
+      .botao {
+        background-color: #0074d9;
+        color: #ffffff;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        border-radius: 10px;
+      }
+
+      .botao:hover {
+        background-color: #0056b3;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      label {
+        font-weight: bold;
+      }
+
+      input[type="text"] {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        width: 95%;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+      }
+
+      input[type="checkbox"] {
+        margin-right: 5px;
+        padding: 8px;
+      }
+
+      .aderencia-final {
+        font-weight: bold;
+        text-align: center;
+        font-size: 20px;
+      }
+
+      .botao-editar {
+        background-color: #54af4c;
+        color: #ffffff;
+        padding: 5px 10px;
+        border: none;
+        cursor: pointer;
+      }
+
+      .botao-editar:hover {
+        background-color: #45a049;
+      }
+
+      select {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        width: 100%;
+      }
+
+      #modal-edit {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <button style="margin-bottom: 8px" class="botao" id="abrirModal">
+      Adicionar Nova Linha
+    </button>
+
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>Pergunta</th>
+        <th>Checkbox</th>
+        <th>Justificativa</th>
+        <th>Responsáveis</th>
+        <th>Prazo de Resolução</th>
+        <th>Prioridade</th>
+        <th>Editar</th>
+      </tr>
+    </table>
+
+    <div id="modal" class="modal" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Adicionar Nova Pergunta</h2>
+          <span class="fechar" id="fecharModal" onclick="fecharModal()"
+            >&times;</span
+          >
+        </div>
+        <div class="modal-input">
+          <label for="pergunta">Pergunta:</label>
+          <input type="text" id="pergunta" />
+        </div>
+        <div class="modal-input">
+          <label>Atende:</label>
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              id="task-yes"
+              name="task"
+              onclick="desmarcar('task-no')"
+            />
+            <label for="task-yes">Sim</label>
+            <input
+              type="checkbox"
+              id="task-no"
+              name="task"
+              onclick="desmarcar('task-yes')"
+            />
+            <label for="task-no">Não</label>
+          </div>
+        </div>
+        <div class="modal-input">
+          <label for="justificativa">Justificativa:</label>
+          <input type="text" id="justificativa" />
+        </div>
+        <div class="modal-input">
+          <label for="responsaveis">Responsáveis:</label>
+          <input type="text" id="responsaveis" />
+        </div>
+        <div class="modal-input">
+          <label for="prazo">Prazo de Resolução:</label>
+          <input type="text" id="prazo" />
+        </div>
+        <div class="modal-input">
+          <label for="prioridade">Prioridade:</label>
+          <select id="prioridade">
+            <option value="Alta">Alta</option>
+            <option value="Média">Média</option>
+            <option value="Baixa">Baixa</option>
+          </select>
+        </div>
+        <button class="botao" id="adicionarLinha" onclick="adicionarLinha()">
+          Adicionar
+        </button>
+      </div>
+    </div>
+
+    <div id="modal-edit" class="modal" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Editar Pergunta</h2>
+          <span class="fechar" id="fecharModalEdit" onclick="fecharModalEdit()"
+            >&times;</span
+          >
+        </div>
+        <div class="modal-input">
+          <label for="pergunta-edit">Pergunta:</label>
+          <input type="text" id="pergunta-edit" />
+        </div>
+        <div class="modal-input">
+          <label>Atende:</label>
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              id="task-yes-edit"
+              name="task"
+              onclick="desmarcar('task-no-edit')"
+            />
+            <label for="task-yes-edit">Sim</label>
+            <input
+              type="checkbox"
+              id="task-no-edit"
+              name="task"
+              onclick="desmarcar('task-yes-edit')"
+            />
+            <label for="task-no-edit">Não</label>
+          </div>
+        </div>
+        <div class="modal-input">
+          <label for="justificativa-edit">Justificativa:</label>
+          <input type="text" id="justificativa-edit" />
+        </div>
+        <div class="modal-input">
+          <label for="responsaveis-edit">Responsáveis:</label>
+          <input type="text" id="responsaveis-edit" />
+        </div>
+        <div class="modal-input">
+          <label for="prazo-edit">Prazo de Resolução:</label>
+          <input type="text" id="prazo-edit" />
+        </div>
+        <div class="modal-input">
+          <label for="prioridade-edit">Prioridade:</label>
+          <select id="prioridade-edit">
+            <option value="Alta">Alta</option>
+            <option value="Média">Média</option>
+            <option value="Baixa">Baixa</option>
+          </select>
+        </div>
+        <button class="botao" id="salvarEdicao" onclick="salvarEdicao()">
+          Salvar
+        </button>
+      </div>
+    </div>
+
+    <div class="aderencia-final">
+      Aderência Final: <span id="percentagemAderencia">0%</span>
+    </div>
+
+    <script>
+      var linhaEditando = null;
+
+      var abrirModal = document.getElementById("abrirModal");
+      abrirModal.addEventListener("click", function () {
+        var modal = document.getElementById("modal");
+        modal.style.display = "flex";
+      });
+
+      function fecharModal() {
+        var modal = document.getElementById("modal");
+        modal.style.display = "none";
+        linhaEditando = null;
+      }
+
+      function adicionarLinha() {
+        document.getElementById("modal").style.display = "flex";
+        var pergunta = document.getElementById("pergunta").value;
+        var taskYes = document.getElementById("task-yes").checked
+          ? "Sim"
+          : "Não";
+        var justificativa = document.getElementById("justificativa").value;
+        var responsaveis = document.getElementById("responsaveis").value;
+        var prazo = document.getElementById("prazo").value;
+        var prioridade = document.getElementById("prioridade").value;
+
+        if (
+          pergunta === "" ||
+          justificativa === "" ||
+          responsaveis === "" ||
+          prazo === ""
+        ) {
+          alert("Por favor preecha todos os campos.");
+          return;
+        }
+
+        var table = document.querySelector("table");
+        var newRow = table.insertRow(-1);
+        var cell1 = newRow.insertCell(0);
+        var cell2 = newRow.insertCell(1);
+        var cell3 = newRow.insertCell(2);
+        var cell4 = newRow.insertCell(3);
+        var cell5 = newRow.insertCell(4);
+        var cell6 = newRow.insertCell(5);
+        var cell7 = newRow.insertCell(6);
+        var cell8 = newRow.insertCell(7);
+
+        cell1.innerHTML = table.rows.length - 2;
+        cell2.innerHTML = pergunta;
+        cell3.innerHTML = taskYes;
+        cell4.innerHTML = justificativa;
+        cell5.innerHTML = responsaveis;
+        cell6.innerHTML = prazo;
+        cell7.innerHTML = prioridade;
+        cell8.innerHTML =
+          '<button class="botao-editar" onclick="abrirModalEdicao(' +
+          (table.rows.length - 3) +
+          ')">Editar</button>';
+
+        atualizarAderenciaFinal();
+        fecharModal();
+
+        document.getElementById("pergunta").value = "";
+        document.getElementById("task-yes").checked = false;
+        document.getElementById("task-no").checked = false;
+        document.getElementById("justificativa").value = "";
+        document.getElementById("responsaveis").value = "";
+        document.getElementById("prazo").value = "";
+        document.getElementById("prioridade").value = "Alta";
+      }
+
+      function abrirModalEdicao(rowId) {
+        document.getElementById("modal-edit").style.display = "flex";
+        var modalEdit = document.getElementById("modal-edit");
+        var tabela = document.querySelector("table");
+        var celula = tabela.rows[rowId + 2].cells;
+
+        document.getElementById("pergunta-edit").value = celula[1].innerHTML;
+
+        var taskYes = celula[2].innerHTML;
+        var taskYesEdit = document.getElementById("task-yes-edit");
+        var taskNoEdit = document.getElementById("task-no-edit");
+
+        if (taskYes === "Sim") {
+          taskYesEdit.checked = true;
+          taskNoEdit.checked = false;
+        } else {
+          taskYesEdit.checked = false;
+          taskNoEdit.checked = true;
+        }
+
+        document.getElementById("justificativa-edit").value =
+          celula[3].innerHTML;
+        document.getElementById("responsaveis-edit").value =
+          celula[4].innerHTML;
+        document.getElementById("prazo-edit").value = celula[5].innerHTML;
+        document.getElementById("prioridade-edit").value = celula[6].innerHTML;
+
+        modalEdit.style.display = "flex";
+        linhaEditando = rowId;
+      }
+
+      function salvarEdicao() {
+        var perguntaEdit = document.getElementById("pergunta-edit").value;
+        var taskYesEdit = document.getElementById("task-yes-edit").checked
+          ? "Sim"
+          : "Não";
+        var justificativaEdit =
+          document.getElementById("justificativa-edit").value;
+        var responsaveisEdit =
+          document.getElementById("responsaveis-edit").value;
+        var prazoEdit = document.getElementById("prazo-edit").value;
+        var prioridadeEdit = document.getElementById("prioridade-edit").value;
+
+        if (
+          perguntaEdit === "" ||
+          justificativaEdit === "" ||
+          responsaveisEdit === "" ||
+          prazoEdit === ""
+        ) {
+          alert("Por favor preecha todos os campos.");
+          return;
+        }
+
+        var tabela = document.querySelector("table");
+        var celula = tabela.rows[linhaEditando + 2].cells;
+
+        celula[1].innerHTML = perguntaEdit;
+        celula[2].innerHTML = taskYesEdit;
+        celula[3].innerHTML = justificativaEdit;
+        celula[4].innerHTML = responsaveisEdit;
+        celula[5].innerHTML = prazoEdit;
+        celula[6].innerHTML = prioridadeEdit;
+
+        atualizarAderenciaFinal();
+        fecharModalEdit();
+
+        document.getElementById("pergunta-edit").value = "";
+        document.getElementById("task-yes-edit").checked = false;
+        document.getElementById("task-no-edit").checked = false;
+        document.getElementById("justificativa-edit").value = "";
+        document.getElementById("responsaveis-edit").value = "";
+        document.getElementById("prazo-edit").value = "";
+        document.getElementById("prioridade-edit").value = "Alta";
+      }
+      function calcularAderencia() {
+        var tabela = document.querySelector("table");
+        var totalLinhas = tabela.rows.length - 1;
+
+        if (totalLinhas > 0) {
+          var totalSim = 0;
+
+          for (var i = 1; i <= totalLinhas; i++) {
+            var celula = tabela.rows[i].cells;
+            var taskValue = celula[2].innerHTML;
+            if (taskValue === "Sim") {
+              totalSim++;
+            }
+          }
+
+          var percentagem = (totalSim / totalLinhas) * 100;
+          return percentagem.toFixed(2) + "%";
+        }
+
+        return "0%";
+      }
+
+      function fecharModalEdit() {
+        var modalEdit = document.getElementById("modal-edit");
+        modalEdit.style.display = "none";
+        linhaEditando = null;
+      }
+
+      function atualizarAderenciaFinal() {
+        var percentagemAderencia = document.getElementById(
+          "percentagemAderencia"
+        );
+        percentagemAderencia.innerHTML = calcularAderencia();
+      }
+    </script>
+  </body>
+</html>
